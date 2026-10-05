@@ -1,1 +1,832 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Наша Сказка Любви 💕</title>
 
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Comfortaa, Caveat and Nunito for playful romantic aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Comfortaa:wght@400;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons and Confetti -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sweet: {
+              50: '#fff5f8',
+              100: '#ffe8f0',
+              200: '#ffd2e2',
+              300: '#ffabcd',
+              400: '#ff71a5',
+              500: '#f93f82',
+              600: '#e51d65',
+              cream: '#fffdfb'
+            }
+          },
+          fontFamily: {
+            cute: ['"Comfortaa"', 'cursive'],
+            hand: ['"Caveat"', 'cursive'],
+            body: ['"Nunito"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background: linear-gradient(180deg, #fff2f6 0%, #ffe5ee 50%, #ffd4e4 100%);
+      font-family: 'Nunito', sans-serif;
+      overflow-x: hidden;
+      touch-action: manipulation;
+    }
+
+    /* Soft Marshmallow frosted card */
+    .marshmallow-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 3px solid #ffccd9;
+      box-shadow: 0 16px 36px -10px rgba(255, 113, 165, 0.25), 0 0 0 5px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Floating memories in the background */
+    #floatingMemoriesContainer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .floating-memory-bubble {
+      position: absolute;
+      bottom: -160px;
+      pointer-events: none;
+      will-change: transform, opacity;
+      animation: floatUpward 18s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+    }
+
+    @keyframes floatUpward {
+      0% {
+        transform: translateY(0) translateX(0) rotate(-8deg) scale(0.75);
+        opacity: 0;
+      }
+      15% {
+        opacity: var(--target-opacity, 0.42);
+      }
+      50% {
+        transform: translateY(-55vh) translateX(var(--drift-x, 30px)) rotate(var(--rot-mid, 8deg)) scale(0.92);
+        opacity: var(--target-opacity, 0.42);
+      }
+      85% {
+        opacity: calc(var(--target-opacity, 0.42) * 0.8);
+      }
+      100% {
+        transform: translateY(-118vh) translateX(var(--drift-end, -25px)) rotate(var(--rot-end, -6deg)) scale(1.05);
+        opacity: 0;
+      }
+    }
+
+    /* Polaroid photo frames */
+    .polaroid-box {
+      background: #ffffff;
+      box-shadow: 0 14px 30px -4px rgba(249, 63, 130, 0.2), 0 0 0 3px #ffffff;
+    }
+
+    /* Sliding polaroids */
+    .slide-left {
+      transform: translateX(-40px) rotate(-10deg);
+      opacity: 0;
+      transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .slide-right {
+      transform: translateX(40px) rotate(10deg);
+      opacity: 0;
+      transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .revealed-left {
+      transform: translateX(0) rotate(-5deg);
+      opacity: 1;
+    }
+    .revealed-right {
+      transform: translateX(0) rotate(5deg);
+      opacity: 1;
+    }
+
+    .merged-left {
+      transform: translateX(36px) rotate(-1deg) scale(1.06) !important;
+      z-index: 25;
+    }
+    .merged-right {
+      transform: translateX(-36px) rotate(2deg) scale(1.06) !important;
+      z-index: 26;
+    }
+
+    /* Key buttons pulsing and unlock states */
+    .key-btn {
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .key-btn.unlocked {
+      background: linear-gradient(135deg, #ff71a5, #f93f82) !important;
+      color: #ffffff !important;
+      border-color: #ffffff !important;
+      transform: scale(0.97);
+      box-shadow: 0 0 18px rgba(249, 63, 130, 0.45);
+    }
+
+    /* Floating heart reaction */
+    @keyframes heartAscend {
+      0% {
+        transform: translateY(0) scale(0.6) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-380px) scale(1.3) rotate(35deg);
+        opacity: 0;
+      }
+    }
+    .floating-kiss {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      animation: heartAscend 2.2s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+    }
+
+    .sweet-glow {
+      filter: drop-shadow(0 4px 14px rgba(249, 63, 130, 0.35));
+    }
+  </style>
+</head>
+<body class="min-h-screen text-stone-700 selection:bg-sweet-200">
+
+  <!-- Background sparkle particles canvas -->
+  <canvas id="sparkleCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- Ambient floating memory bubbles layer -->
+  <div id="floatingMemoriesContainer"></div>
+
+  <!-- Soft pastel ambient orbs -->
+  <div class="fixed -top-24 -left-24 w-88 h-88 bg-pink-200/50 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="fixed top-1/3 -right-28 w-96 h-96 bg-rose-200/50 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="fixed -bottom-20 left-1/4 w-88 h-88 bg-sweet-200/60 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Audio control pill -->
+  <div id="audioPill" class="fixed top-4 right-4 z-40">
+    <button id="toggleSoundBtn" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border-2 border-pink-200 shadow-md text-sweet-500 font-cute text-xs hover:scale-105 active:scale-95 transition-all">
+      <i data-lucide="volume-2" class="w-3.5 h-3.5 text-sweet-400"></i>
+      <span class="text-[11px] font-bold">Звук</span>
+    </button>
+  </div>
+
+  <!-- ==========================================
+       STEP 1: 3 KEYS TO UNLOCK THE HEART
+  =========================================== -->
+  <section id="step1Screen" class="fixed inset-0 z-50 flex flex-col justify-between items-center px-4 py-8 bg-gradient-to-b from-[#fff3f7] via-[#ffe8f1] to-[#ffd7e5] transition-all duration-700">
+    
+    <!-- Top badge -->
+    <div class="text-center pt-2">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border-2 border-pink-200 shadow-sm text-sweet-500 text-xs font-cute font-bold">
+        <span>🔒</span> Тайна для двоих <span>✨</span>
+      </div>
+    </div>
+
+    <!-- Center Key Puzzle Card -->
+    <div class="w-full max-w-sm flex flex-col items-center my-auto marshmallow-card rounded-[34px] p-6 text-center">
+      
+      <!-- Glowing Animated Lock Icon -->
+      <div id="heartLockIcon" class="w-16 h-16 rounded-full bg-gradient-to-tr from-sweet-400 to-sweet-300 text-white flex items-center justify-center text-3xl shadow-lg border-2 border-white mb-4 animate-bounce sweet-glow">
+        💖
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-cute font-bold text-sweet-600 mb-1">
+        Секрет наших сердец
+      </h1>
+      
+      <p class="font-hand text-2xl text-stone-600 mb-6">
+        Нажми на 3 ключа, чтобы пробудить нашу сказку...
+      </p>
+
+      <!-- 3 Key Buttons -->
+      <div class="w-full space-y-3.5 mb-6">
+        
+        <!-- Key 1 -->
+        <button id="keyBtn1" class="key-btn w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-white border-2 border-pink-200 text-stone-700 shadow-sm hover:border-sweet-300 active:scale-95">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">✨</span>
+            <span class="font-cute font-bold text-sm">Первая искра</span>
+          </div>
+          <span class="key-status text-xs bg-pink-100 text-sweet-500 px-2.5 py-1 rounded-full font-bold">Нажми</span>
+        </button>
+
+        <!-- Key 2 -->
+        <button id="keyBtn2" class="key-btn w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-white border-2 border-pink-200 text-stone-700 shadow-sm hover:border-sweet-300 active:scale-95">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">💌</span>
+            <span class="font-cute font-bold text-sm">Шёпот судьбы</span>
+          </div>
+          <span class="key-status text-xs bg-pink-100 text-sweet-500 px-2.5 py-1 rounded-full font-bold">Нажми</span>
+        </button>
+
+        <!-- Key 3 -->
+        <button id="keyBtn3" class="key-btn w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-white border-2 border-pink-200 text-stone-700 shadow-sm hover:border-sweet-300 active:scale-95">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">💖</span>
+            <span class="font-cute font-bold text-sm">Одно дыхание</span>
+          </div>
+          <span class="key-status text-xs bg-pink-100 text-sweet-500 px-2.5 py-1 rounded-full font-bold">Нажми</span>
+        </button>
+
+      </div>
+
+      <!-- Progress Indicators -->
+      <div class="flex items-center justify-center gap-3">
+        <div id="progDot1" class="w-3.5 h-3.5 rounded-full bg-pink-200 border-2 border-pink-300 transition-colors"></div>
+        <div id="progDot2" class="w-3.5 h-3.5 rounded-full bg-pink-200 border-2 border-pink-300 transition-colors"></div>
+        <div id="progDot3" class="w-3.5 h-3.5 rounded-full bg-pink-200 border-2 border-pink-300 transition-colors"></div>
+      </div>
+
+    </div>
+
+    <!-- Bottom note -->
+    <div class="pb-2 text-center font-hand text-sweet-400 text-2xl">
+      Сделай шаг навстречу чуду 🍓
+    </div>
+
+  </section>
+
+  <!-- ==========================================
+       STEP 2: PHOTO REVEAL & UNION SCREEN
+  =========================================== -->
+  <section id="step2Screen" class="fixed inset-0 z-40 flex flex-col justify-between items-center px-4 py-8 bg-gradient-to-b from-[#fff3f7] via-[#ffe5ee] to-[#ffd4e4] opacity-0 pointer-events-none transition-all duration-1000">
+    
+    <!-- Top badge -->
+    <div class="text-center pt-2">
+      <div class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/90 border-2 border-pink-200 shadow-sm text-sweet-500 text-xs font-cute font-bold">
+        <span>✨</span> Тайна открыта <span>✨</span>
+      </div>
+    </div>
+
+    <!-- Center Photo Reveal Container -->
+    <div class="w-full max-w-sm flex flex-col items-center my-auto">
+      
+      <p class="text-center font-hand text-3xl text-sweet-500 mb-2">
+        Два мира стали одним целым...
+      </p>
+
+      <!-- Polaroids container -->
+      <div class="relative w-full flex items-center justify-center py-6 mb-3">
+        
+        <!-- Left Polaroid: "Он" -->
+        <div id="polaroidGroom" class="slide-left relative z-10 flex flex-col items-center -mr-2">
+          <div class="w-12 h-3.5 bg-pink-300/80 -mb-2 z-20 rounded-sm shadow-sm rotate-6"></div>
+          <div class="w-28 sm:w-32 polaroid-box p-2.5 pb-3.5 rounded-2xl border border-pink-100 flex flex-col items-center">
+            <!-- Replace with Groom's Photo -->
+            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80" 
+                 alt="Он" 
+                 class="w-full h-32 sm:h-36 object-cover rounded-xl pointer-events-none">
+            <span class="mt-2 text-xs font-cute font-bold text-sweet-600">Он 🐻</span>
+          </div>
+        </div>
+
+        <!-- Center pulsing Heart badge -->
+        <div id="centerSparkleHeart" class="relative z-20 w-12 h-12 -mx-3 rounded-full bg-white border-2 border-pink-300 shadow-lg flex items-center justify-center text-xl animate-pulse sweet-glow">
+          💖
+        </div>
+
+        <!-- Right Polaroid: "Она" -->
+        <div id="polaroidBride" class="slide-right relative z-10 flex flex-col items-center -ml-2">
+          <div class="w-12 h-3.5 bg-rose-300/80 -mb-2 z-20 rounded-sm shadow-sm -rotate-6"></div>
+          <div class="w-28 sm:w-32 polaroid-box p-2.5 pb-3.5 rounded-2xl border border-pink-100 flex flex-col items-center">
+            <!-- Replace with Bride's Photo -->
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" 
+                 alt="Она" 
+                 class="w-full h-32 sm:h-36 object-cover rounded-xl pointer-events-none">
+            <span class="mt-2 text-xs font-cute font-bold text-sweet-600">Она 🐰</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Couple names -->
+      <h2 class="text-3xl font-cute font-bold text-sweet-600 tracking-wide text-center mb-2">
+        Арман & Анель
+      </h2>
+
+      <!-- Emotional Love Letter Card -->
+      <div class="marshmallow-card rounded-2xl p-4 text-center mb-6 max-w-xs">
+        <p class="font-hand text-2xl text-stone-600 leading-snug">
+          «Две судьбы, начавшиеся в разных мирах, сошлись в одну бесконечную сказку...»
+        </p>
+      </div>
+
+      <!-- Button to reveal Step 3 (The Cartoon Video) -->
+      <button id="goToStep3Btn" class="group relative px-8 py-3.5 rounded-full overflow-hidden shadow-lg shadow-pink-400/35 active:scale-95 transition-all bg-gradient-to-r from-sweet-400 via-sweet-500 to-sweet-400 hover:brightness-105 border-2 border-white">
+        <span class="relative flex items-center gap-2 font-cute font-bold text-sm text-white">
+          <span>🎬</span> Смотреть наш мультфильм <span>🍿</span>
+        </span>
+      </button>
+
+    </div>
+
+    <!-- Bottom tiny signature -->
+    <div class="pb-1 text-center font-hand text-sweet-400 text-2xl">
+      Наша история оживает прямо сейчас...
+    </div>
+
+  </section>
+
+  <!-- ==========================================
+       STEP 3: 3-MINUTE AI ANIMATED CARTOON PREMIERE
+  =========================================== -->
+  <main id="step3Screen" class="relative z-10 max-w-md mx-auto px-4 pt-8 pb-24 opacity-0 transition-opacity duration-1000 hidden">
+    
+    <!-- Top Showcase Header -->
+    <header class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border-2 border-pink-200 shadow-sm text-sweet-500 text-xs font-cute font-bold mb-3">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sweet-400"></i> Премьера нашего мультика
+      </div>
+      <h2 class="text-3xl font-cute font-bold text-sweet-600 mb-1">
+        История нашей любви 💕
+      </h2>
+      <p class="font-hand text-3xl text-stone-600">
+        3 минуты настоящей магии
+      </p>
+    </header>
+
+    <!-- Adorable Cartoon Projector Box -->
+    <section class="mb-8">
+      <div class="relative">
+        
+        <!-- Bunny Ears on top of screen -->
+        <div class="flex justify-center gap-14 -mb-3 z-0 relative pointer-events-none">
+          <div class="w-10 h-12 bg-white rounded-t-full border-2 border-pink-300 shadow-inner flex items-center justify-center p-1.5">
+            <div class="w-4 h-8 bg-pink-200 rounded-t-full"></div>
+          </div>
+          <div class="w-10 h-12 bg-white rounded-t-full border-2 border-pink-300 shadow-inner flex items-center justify-center p-1.5">
+            <div class="w-4 h-8 bg-pink-200 rounded-t-full"></div>
+          </div>
+        </div>
+
+        <!-- Marshmallow TV Body -->
+        <div class="relative z-10 marshmallow-card rounded-[34px] p-3 sm:p-4">
+          
+          <!-- Screen container -->
+          <div class="relative w-full aspect-[9/16] sm:aspect-video rounded-[26px] overflow-hidden bg-stone-900 border-4 border-pink-100 shadow-inner flex items-center justify-center group">
+            
+            <!-- Video Element (replace source with your AI cartoon video file) -->
+            <video id="aiStoryVideo"
+                   class="w-full h-full object-cover"
+                   playsinline
+                   preload="metadata"
+                   poster="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1080&q=80">
+              <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+              Видео не поддерживается браузером.
+            </video>
+
+            <!-- Video Play Overlay Screen -->
+            <div id="videoPlayOverlay" class="absolute inset-0 bg-pink-950/40 backdrop-blur-[2px] flex flex-col items-center justify-center transition-opacity duration-300">
+              <button id="mainPlayBtn" class="w-18 h-18 sm:w-20 sm:h-20 p-5 rounded-full bg-white text-sweet-500 flex items-center justify-center shadow-xl border-4 border-sweet-300 hover:scale-105 active:scale-95 transition-all sweet-glow">
+                <i data-lucide="play" class="w-8 h-8 sm:w-9 sm:h-9 fill-sweet-400 text-sweet-400 ml-1"></i>
+              </button>
+              <span class="mt-4 px-4 py-1.5 rounded-full bg-white/95 text-sweet-600 font-cute font-bold text-xs shadow-md border border-pink-200">
+                Запустить мультик (3:00) 🍿
+              </span>
+            </div>
+
+            <!-- Custom control bar -->
+            <div class="absolute bottom-3 inset-x-3 flex items-center justify-between px-4 py-2.5 rounded-2xl bg-white/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity border-2 border-pink-200 text-sweet-600 text-xs">
+              <button id="inlinePlayToggle" class="hover:scale-110 transition-transform">
+                <i data-lucide="play" class="w-4 h-4 fill-sweet-500" id="playToggleIcon"></i>
+              </button>
+              <span class="font-cute text-[11px] font-bold" id="videoDurationTimer">00:00 / 03:00</span>
+              <button id="inlineFullscreenBtn" class="hover:scale-110 transition-transform">
+                <i data-lucide="maximize" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Bottom TV description -->
+          <div class="pt-3 px-2 flex items-center justify-between text-xs">
+            <span class="font-cute font-bold text-sweet-500 flex items-center gap-1.5">
+              <span>🎀</span> Наш AI Мультфильм
+            </span>
+            <span class="font-hand text-stone-500 text-xl">Создано с любовью</span>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Sweet Love Note Card -->
+    <section class="mb-8">
+      <div class="marshmallow-card rounded-[30px] p-6 text-center relative overflow-hidden">
+        <div class="w-12 h-12 rounded-full bg-pink-100 text-sweet-500 flex items-center justify-center mx-auto mb-3 shadow-inner">
+          <i data-lucide="heart" class="w-6 h-6 fill-sweet-400 text-sweet-400"></i>
+        </div>
+        
+        <h3 class="font-cute font-bold text-base text-sweet-600 mb-2">
+          Слова от чистого сердца 💌
+        </h3>
+
+        <p class="font-hand text-2xl text-stone-600 leading-relaxed mb-4">
+          «Каждая секунда этого мультфильма создана для того, чтобы напомнить: самое главное чудо в этой жизни — это встретить тебя.»
+        </p>
+
+        <div class="inline-flex items-center gap-2 text-xs font-cute font-bold text-sweet-500 bg-pink-50 px-4 py-1.5 rounded-full border border-pink-200">
+          <span>Арман</span> <span>❤️</span> <span>Анель</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Floating Hugs & Hearts Interactive Button -->
+    <section class="mb-10 text-center">
+      <div class="marshmallow-card rounded-[30px] p-6 relative">
+        <h4 class="font-cute font-bold text-lg text-sweet-600 mb-1">Подарить любовь 🤗</h4>
+        <p class="text-xs text-stone-500 mb-5 font-semibold">
+          Осыпь экран романтическими искрами и сердечками!
+        </p>
+
+        <button id="sendHugsActionBtn" class="group relative inline-flex items-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-sweet-400 via-sweet-500 to-sweet-400 text-white font-cute font-bold text-sm shadow-md shadow-pink-400/40 hover:scale-105 active:scale-90 transition-all border-2 border-white">
+          <span class="text-lg">💖</span>
+          <span>Подарить объятия</span>
+          <span class="text-lg">✨</span>
+        </button>
+
+        <div class="mt-4 flex items-center justify-center gap-1.5 text-xs font-cute font-bold text-sweet-500">
+          <span>Объятий подарено:</span>
+          <span id="hugsCountDisplay" class="text-lg text-sweet-600 font-extrabold ml-1">520</span>
+          <span>🧸</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs font-cute text-stone-400 space-y-1">
+      <p>Наша маленькая цифровая сказка ✨</p>
+      <p class="font-hand text-2xl text-sweet-400">Навсегда в моём сердце</p>
+    </footer>
+
+  </main>
+
+  <!-- ==========================================
+       JAVASCRIPT LOGIC
+  =========================================== -->
+  <script>
+    lucide.createIcons();
+
+    /* --- 1. Sound FX Synthesis (Web Audio API) --- */
+    let audioCtx = null;
+    let isSoundMuted = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playChimeNote(freq = 587.33, duration = 0.6) {
+      if (isSoundMuted) return;
+      initAudio();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+      gain.gain.setValueAtTime(0, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playChord() {
+      playChimeNote(523.25, 0.8);
+      setTimeout(() => playChimeNote(659.25, 0.8), 80);
+      setTimeout(() => playChimeNote(783.99, 1.0), 160);
+      setTimeout(() => playChimeNote(1046.50, 1.2), 240);
+    }
+
+    // Sound toggle button
+    document.getElementById('toggleSoundBtn').addEventListener('click', () => {
+      isSoundMuted = !isSoundMuted;
+      const btn = document.getElementById('toggleSoundBtn');
+      if (isSoundMuted) {
+        btn.innerHTML = '<i data-lucide="volume-x" class="w-3.5 h-3.5 text-stone-400"></i><span class="text-[11px] font-bold text-stone-400">Без звука</span>';
+      } else {
+        btn.innerHTML = '<i data-lucide="volume-2" class="w-3.5 h-3.5 text-sweet-400"></i><span class="text-[11px] font-bold">Звук</span>';
+        playChimeNote(880, 0.4);
+      }
+      lucide.createIcons();
+    });
+
+    /* --- 2. Floating Memories Background --- */
+    const memoriesContainer = document.getElementById('floatingMemoriesContainer');
+    const groomPhotoUrl = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80";
+    const bridePhotoUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80";
+
+    const memoryPhotos = [
+      { url: groomPhotoUrl, tag: "Он 🐻", heart: "💖" },
+      { url: bridePhotoUrl, tag: "Она 🐰", heart: "🌸" },
+      { url: groomPhotoUrl, tag: "Любимый ✨", heart: "🍓" },
+      { url: bridePhotoUrl, tag: "Нежность 🎀", heart: "💕" }
+    ];
+
+    function createFloatingMemory() {
+      if (!memoriesContainer) return;
+
+      const memory = memoryPhotos[Math.floor(Math.random() * memoryPhotos.length)];
+      const el = document.createElement('div');
+      el.className = 'floating-memory-bubble';
+
+      const leftPos = Math.random() * 88 + 4;
+      el.style.left = `${leftPos}%`;
+
+      const duration = (Math.random() * 7 + 14).toFixed(1);
+      const driftX = (Math.random() * 80 - 40).toFixed(0);
+      const driftEnd = (Math.random() * 60 - 30).toFixed(0);
+      const rotMid = (Math.random() * 16 - 8).toFixed(1);
+      const rotEnd = (Math.random() * 18 - 9).toFixed(1);
+      const targetOpacity = (Math.random() * 0.16 + 0.32).toFixed(2);
+
+      el.style.setProperty('--drift-x', `${driftX}px`);
+      el.style.setProperty('--drift-end', `${driftEnd}px`);
+      el.style.setProperty('--rot-mid', `${rotMid}deg`);
+      el.style.setProperty('--rot-end', `${rotEnd}deg`);
+      el.style.setProperty('--target-opacity', targetOpacity);
+      el.style.animationDuration = `${duration}s`;
+
+      el.innerHTML = `
+        <div class="p-2 pb-3 bg-white/85 backdrop-blur-[3px] rounded-2xl shadow-lg border border-pink-200/70 flex flex-col items-center w-24 sm:w-28">
+          <div class="relative w-full aspect-square rounded-xl overflow-hidden shadow-inner">
+            <img src="${memory.url}" alt="${memory.tag}" class="w-full h-full object-cover">
+            <span class="absolute top-1 right-1 text-xs drop-shadow">${memory.heart}</span>
+          </div>
+          <span class="mt-1.5 text-[10px] font-cute font-bold text-sweet-500 tracking-wider">${memory.tag}</span>
+        </div>
+      `;
+
+      memoriesContainer.appendChild(el);
+      setTimeout(() => el.remove(), duration * 1000);
+    }
+
+    // Start background memories
+    setInterval(createFloatingMemory, 3500);
+
+    /* --- 3. Step 1 Logic: 3 Keys to Unlock --- */
+    const keysState = { 1: false, 2: false, 3: false };
+    const step1Screen = document.getElementById('step1Screen');
+    const step2Screen = document.getElementById('step2Screen');
+    const polaroidGroom = document.getElementById('polaroidGroom');
+    const polaroidBride = document.getElementById('polaroidBride');
+
+    function checkKey(keyNum, btnId, dotId, freq) {
+      if (keysState[keyNum]) return;
+      keysState[keyNum] = true;
+
+      playChimeNote(freq, 0.5);
+
+      const btn = document.getElementById(btnId);
+      btn.classList.add('unlocked');
+      const statusSpan = btn.querySelector('.key-status');
+      statusSpan.textContent = 'Открыто ✨';
+      statusSpan.className = 'key-status text-xs bg-white text-sweet-500 px-2.5 py-1 rounded-full font-bold';
+
+      const dot = document.getElementById(dotId);
+      dot.className = 'w-3.5 h-3.5 rounded-full bg-sweet-500 border-2 border-white shadow-sm';
+
+      // Confetti burst for this key
+      confetti({
+        particleCount: 20,
+        spread: 45,
+        origin: { y: 0.6 },
+        colors: ['#ff829d', '#ffd3dc', '#ffffff']
+      });
+
+      // If all 3 keys are unlocked -> Trigger Step 2
+      if (keysState[1] && keysState[2] && keysState[3]) {
+        setTimeout(triggerStep2Reveal, 600);
+      }
+    }
+
+    document.getElementById('keyBtn1').addEventListener('click', () => checkKey(1, 'keyBtn1', 'progDot1', 523.25));
+    document.getElementById('keyBtn2').addEventListener('click', () => checkKey(2, 'keyBtn2', 'progDot2', 659.25));
+    document.getElementById('keyBtn3').addEventListener('click', () => checkKey(3, 'keyBtn3', 'progDot3', 783.99));
+
+    /* --- 4. Step 2 Logic: Photos Appearance & Union --- */
+    function triggerStep2Reveal() {
+      playChord();
+
+      // Big celebratory burst
+      confetti({
+        particleCount: 60,
+        spread: 80,
+        origin: { y: 0.5 },
+        colors: ['#ff829d', '#fa557a', '#ffd3dc', '#ffffff', '#ffd166']
+      });
+
+      // Fade out Step 1
+      step1Screen.style.opacity = '0';
+      step1Screen.style.transform = 'scale(0.96)';
+
+      setTimeout(() => {
+        step1Screen.classList.add('hidden');
+        step2Screen.classList.remove('opacity-0', 'pointer-events-none');
+        step2Screen.classList.add('opacity-100');
+
+        // Trigger slide-in of photos
+        setTimeout(() => {
+          polaroidGroom.classList.add('revealed-left');
+          polaroidBride.classList.add('revealed-right');
+
+          // Smoothly slide and unite photos
+          setTimeout(() => {
+            polaroidGroom.classList.add('merged-left');
+            polaroidBride.classList.add('merged-right');
+          }, 900);
+        }, 300);
+
+      }, 800);
+    }
+
+    /* --- 5. Step 3 Logic: Unfold AI Cartoon Video Theater --- */
+    const goToStep3Btn = document.getElementById('goToStep3Btn');
+    const step3Screen = document.getElementById('step3Screen');
+
+    goToStep3Btn.addEventListener('click', () => {
+      playChord();
+
+      confetti({
+        particleCount: 50,
+        spread: 70,
+        origin: { y: 0.7 },
+        colors: ['#ff829d', '#ffd3dc', '#ffffff']
+      });
+
+      // Spawning burst of floating memories
+      for (let k = 0; k < 4; k++) {
+        setTimeout(createFloatingMemory, k * 300);
+      }
+
+      step2Screen.style.opacity = '0';
+      step2Screen.style.transform = 'scale(0.96)';
+
+      setTimeout(() => {
+        step2Screen.classList.add('hidden');
+        step3Screen.classList.remove('hidden');
+
+        requestAnimationFrame(() => {
+          step3Screen.classList.remove('opacity-0');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }, 700);
+    });
+
+    /* --- 6. Video Player Controls --- */
+    const video = document.getElementById('aiStoryVideo');
+    const playOverlay = document.getElementById('videoPlayOverlay');
+    const masterPlayBtn = document.getElementById('mainPlayBtn');
+    const inlinePlayToggle = document.getElementById('inlinePlayToggle');
+    const playToggleIcon = document.getElementById('playToggleIcon');
+    const timerDisplay = document.getElementById('videoDurationTimer');
+    const fullscreenBtn = document.getElementById('inlineFullscreenBtn');
+
+    function toggleVideoPlay() {
+      if (video.paused) {
+        video.play();
+        playOverlay.classList.add('opacity-0', 'pointer-events-none');
+        playToggleIcon.setAttribute('data-lucide', 'pause');
+
+        createFloatingMemory();
+        setTimeout(createFloatingMemory, 600);
+      } else {
+        video.pause();
+        playOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        playToggleIcon.setAttribute('data-lucide', 'play');
+      }
+      lucide.createIcons();
+    }
+
+    masterPlayBtn.addEventListener('click', toggleVideoPlay);
+    inlinePlayToggle.addEventListener('click', toggleVideoPlay);
+
+    video.addEventListener('timeupdate', () => {
+      const curM = Math.floor(video.currentTime / 60);
+      const curS = Math.floor(video.currentTime % 60).toString().padStart(2, '0');
+      const durM = Math.floor(video.duration / 60) || 3;
+      const durS = Math.floor(video.duration % 60 || 0).toString().padStart(2, '0');
+      timerDisplay.textContent = `${curM}:${curS} / ${durM}:${durS}`;
+    });
+
+    video.addEventListener('ended', () => {
+      playOverlay.classList.remove('opacity-0', 'pointer-events-none');
+      playToggleIcon.setAttribute('data-lucide', 'play');
+      lucide.createIcons();
+    });
+
+    fullscreenBtn.addEventListener('click', () => {
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen();
+      }
+    });
+
+    /* --- 7. Interactive Hugs & Flying Emojis --- */
+    const hugsBtn = document.getElementById('sendHugsActionBtn');
+    const hugsDisplay = document.getElementById('hugsCountDisplay');
+    let hugCount = 520;
+    const cuteIcons = ['💖', '💕', '🌸', '✨', '🧸', '🐰', '🍓', '🎀'];
+
+    hugsBtn.addEventListener('click', (e) => {
+      hugCount++;
+      hugsDisplay.textContent = hugCount;
+      playChimeNote(987.77, 0.4);
+
+      confetti({
+        particleCount: 22,
+        spread: 45,
+        origin: { y: 0.8 },
+        colors: ['#ff829d', '#ffd3dc', '#ffffff']
+      });
+
+      for (let i = 0; i < 4; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'floating-kiss';
+        heart.textContent = cuteIcons[Math.floor(Math.random() * cuteIcons.length)];
+        heart.style.left = `${Math.random() * 60 + 20}%`;
+        heart.style.top = `${e.clientY - 20}px`;
+        heart.style.fontSize = `${Math.random() * 16 + 22}px`;
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 2200);
+      }
+    });
+
+    /* --- 8. Background Sparkles Canvas --- */
+    const canvas = document.getElementById('sparkleCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const sparkles = [];
+    const sparkleColors = ['#ffccd9', '#ff99b8', '#ffc2d1', '#ffe5ec', '#ffffff'];
+
+    for (let i = 0; i < 35; i++) {
+      sparkles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 3 + 1,
+        speedY: Math.random() * 0.4 + 0.15,
+        opacity: Math.random() * 0.7 + 0.2,
+        color: sparkleColors[Math.floor(Math.random() * sparkleColors.length)]
+      });
+    }
+
+    function animateSparkles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      sparkles.forEach(p => {
+        p.y -= p.speedY;
+        if (p.y < 0) {
+          p.y = canvas.height + 10;
+          p.x = Math.random() * canvas.width;
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.opacity;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateSparkles);
+    }
+    animateSparkles();
+  </script>
+</body>
+</html>
